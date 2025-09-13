@@ -336,8 +336,7 @@ const SingleChat = ({
                     return [...prev, newMessageReceived];
                 });
                 
-                // Only show new message button if this message is not from current user
-                // AND if user has scrolled up more than 10 messages from bottom
+                // Handle received messages based on scroll position
                 if (newMessageReceived.sender._id !== currentUserId) {
                     const messagesContainer = messagesContainerRef.current;
                     if (messagesContainer) {
@@ -345,9 +344,14 @@ const SingleChat = ({
                         const isScrolledUpMoreThan10Messages = scrolledUpDistance > 600; // ~10 messages * 60px average height
                         
                         if (isScrolledUpMoreThan10Messages) {
+                            // User scrolled up more than 10 messages - show button
                             setShowNewMessageButton(true);
+                        } else {
+                            // User is within 10 messages from bottom - auto-scroll
+                            setTimeout(() => {
+                                scrollToBottom(true);
+                            }, 50);
                         }
-                        // If user is within 10 messages from bottom, don't show button
                     }
                 }
                 
