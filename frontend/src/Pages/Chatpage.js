@@ -509,10 +509,10 @@ const Chatpage = () => {
                         box-sizing: border-box !important;
                     }
                     
-                    /* Increase message container bottom padding on mobile when keyboard might be open */
+                    /* Reduce message container bottom padding on mobile */
                     @media (max-width: 768px) {
                         .messages-container-mobile {
-                            padding-bottom: 200px !important;
+                            padding-bottom: 100px !important;
                         }
                         
                         /* Ensure viewport height accounts for mobile browsers */
@@ -523,7 +523,7 @@ const Chatpage = () => {
                         
                         /* Additional spacing for when keyboard is active */
                         .keyboard-active .messages-container-mobile {
-                            padding-bottom: 250px !important;
+                            padding-bottom: 120px !important;
                         }
                     }
                 }
