@@ -260,6 +260,22 @@ const SingleChat = ({
         };
 
         setSending(true);
+        
+        // Optimistic UI update - show message immediately
+        const optimisticMessage = {
+            _id: Date.now().toString(), // Temporary ID
+            content: messageData.content,
+            sender: { _id: currentUserId, name: currentUserName },
+            chat: selectedChat,
+            createdAt: new Date().toISOString(),
+            isOptimistic: true
+        };
+        
+        setMessages(prev => [...prev, optimisticMessage]);
+        setNewMessage('');
+        setIsUserScrolling(false);
+        scrollToBottom();
+        
         try {
             const { data } = await axios.post('/api/message', messageData, {
                 headers: {
@@ -268,31 +284,29 @@ const SingleChat = ({
                 }
             });
             
+            // Replace optimistic message with real message
+            setMessages(prev => prev.map(msg => 
+                msg.isOptimistic && msg.content === data.content ? data : msg
+            ));
+            
             // Emit message to socket for real-time delivery to other users
             if (socket) {
-                console.log('🚀 Sending message to socket:', data.content);
                 socket.emit('new message', data);
             }
-            
-            // Add message locally for sender (other users get it via socket)
-            setMessages(prev => [...prev, data]);
-            setNewMessage('');
             
             // Notify parent component about the new message
             if (onMessageSent) {
                 onMessageSent(data);
             }
             
-            // Reset user scrolling state and scroll to bottom after sending message
-            setIsUserScrolling(false);
-            setTimeout(() => {
-                scrollToBottom();
-            }, 100);
-            
             // Don't auto-focus back to input to prevent keyboard flickering
             // User can tap input to bring keyboard back when needed
         } catch (error) {
             console.error('Error sending message:', error);
+            // Remove failed optimistic message
+            setMessages(prev => prev.filter(msg => !msg.isOptimistic));
+            // Restore message text for retry
+            setNewMessage(messageData.content);
             alert('Failed to send message. Please try again.');
         } finally {
             setSending(false);
