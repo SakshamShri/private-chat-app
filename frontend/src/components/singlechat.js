@@ -20,12 +20,12 @@ const SingleChat = ({
     const [loading, setLoading] = useState(false);
     const [sending, setSending] = useState(false);
     const [isUserScrolling, setIsUserScrolling] = useState(false);
-    const [socketConnected, setSocketConnected] = useState(false);
     const [showNewMessageButton, setShowNewMessageButton] = useState(false);
     const [showScrollToBottomButton, setShowScrollToBottomButton] = useState(false);
     const [isAtBottom, setIsAtBottom] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const [typingUsers, setTypingUsers] = useState([]);
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
     const typingTimeoutRef = useRef(null);
     
     // Chat management states
@@ -572,7 +572,16 @@ const SingleChat = ({
     }
 
     return (
-        <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden" }}>
+        <div 
+            onClick={(e) => {
+                // Close keyboard if clicking outside input area
+                if (e.target !== inputRef.current && !e.target.closest('.mobile-input-fix')) {
+                    setKeyboardOpen(false);
+                    inputRef.current?.blur();
+                }
+            }}
+            style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden" }}
+        >
             {/* Chat Header */}
             <div style={{ 
                 padding: '2px 16px', 
@@ -921,12 +930,14 @@ const SingleChat = ({
                                 }
                             }}
                             onKeyDown={handleKeyDown}
+                            onFocus={() => setKeyboardOpen(true)}
                             onBlur={(e) => {
-                                // Prevent blur during message sending to keep keyboard open
-                                if (sending) {
-                                    e.preventDefault();
-                                    e.target.focus();
+                                // Only allow blur if keyboard should close (clicked outside)
+                                if (!keyboardOpen) {
+                                    return;
                                 }
+                                e.preventDefault();
+                                e.target.focus();
                             }}
                             placeholder="Type a message..."
                             style={{
