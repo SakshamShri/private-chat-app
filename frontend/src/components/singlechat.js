@@ -115,13 +115,25 @@ const SingleChat = ({
     const scrollTimeoutRef = useRef(null);
 
     // Auto-scroll to bottom when new messages arrive
-    const scrollToBottom = () => {
+    const scrollToBottom = (force = false) => {
         if (messagesEndRef.current) {
+            // For mobile, use immediate scroll to prevent keyboard overlap
+            const isMobile = window.innerWidth <= 768;
             messagesEndRef.current.scrollIntoView({ 
-                behavior: "smooth", 
+                behavior: isMobile || force ? "auto" : "smooth", 
                 block: "end",
                 inline: "nearest"
             });
+            
+            // Additional scroll adjustment for mobile to account for keyboard
+            if (isMobile) {
+                setTimeout(() => {
+                    const messagesContainer = messagesContainerRef.current;
+                    if (messagesContainer) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                }, 100);
+            }
         }
     };
     // Socket setup
@@ -176,25 +188,21 @@ const SingleChat = ({
         }, 1000);
     };
 
-    // Auto-scroll to bottom only when chat is first loaded
+    // Auto-scroll to bottom when messages change
     useEffect(() => {
         if (messages.length > 0) {
             const messagesContainer = messagesContainerRef.current;
             if (messagesContainer) {
-                // Only auto-scroll if user hasn't manually scrolled and is at bottom
-                if (!isUserScrolling && isAtBottom) {
-                    const currentScrollHeight = messagesContainer.scrollHeight;
-                    const currentScrollTop = messagesContainer.scrollTop;
-                    const clientHeight = messagesContainer.clientHeight;
-                    
-                    // Only scroll if we're actually near the bottom
-                    if (currentScrollTop + clientHeight >= currentScrollHeight - 50) {
-                        scrollToBottom();
-                    }
+                // Always scroll to bottom when new messages are added and user is at bottom
+                if (isAtBottom || !isUserScrolling) {
+                    // Use requestAnimationFrame for smoother scrolling
+                    requestAnimationFrame(() => {
+                        scrollToBottom(true);
+                    });
                 }
             }
         }
-    }, [messages.length]); // Only trigger when message count changes, not on every render
+    }, [messages.length, isAtBottom]); // Trigger when message count or bottom state changes
 
     // Fetch messages when a chat is selected
     useEffect(() => {
@@ -276,11 +284,17 @@ const SingleChat = ({
         setMessages(prev => [...prev, optimisticMessage]);
         setNewMessage('');
         setIsUserScrolling(false);
+        setIsAtBottom(true);
         
-        // Auto-scroll to bottom after sending message
+        // Force immediate scroll to bottom after sending message
         setTimeout(() => {
-            scrollToBottom();
-        }, 50);
+            scrollToBottom(true);
+        }, 10);
+        
+        // Additional scroll for mobile after a short delay
+        setTimeout(() => {
+            scrollToBottom(true);
+        }, 200);
         
         try {
             const { data } = await axios.post('/api/message', messageData, {
@@ -294,6 +308,11 @@ const SingleChat = ({
             setMessages(prev => prev.map(msg => 
                 msg.isOptimistic && msg.content === data.content ? data : msg
             ));
+            
+            // Ensure scroll to bottom after message is confirmed
+            setTimeout(() => {
+                scrollToBottom(true);
+            }, 50);
             
             // Emit message to socket for real-time delivery to other users
             if (socket) {
@@ -336,17 +355,14 @@ const SingleChat = ({
                     onMessageSent(newMessageReceived);
                 }
                 
-                // Check if user is at bottom before deciding to auto-scroll
-                const isCurrentlyAtBottom = checkIfAtBottom();
-                if (isCurrentlyAtBottom) {
-                    // Auto-scroll if user is at bottom
-                    setTimeout(() => {
-                        scrollToBottom();
-                    }, 100);
-                } else {
-                    // Show new message button if user is scrolled up
-                    setShowNewMessageButton(true);
-                }
+                // Always scroll to bottom for received messages to ensure visibility
+                setTimeout(() => {
+                    scrollToBottom(true);
+                }, 50);
+                
+                // Also ensure we're marked as at bottom
+                setIsAtBottom(true);
+                setIsUserScrolling(false);
             }
         };
 
