@@ -118,16 +118,30 @@ const SingleChat = ({
     const scrollToBottom = (force = false) => {
         const messagesContainer = messagesContainerRef.current;
         if (messagesContainer) {
-            // Direct scroll to bottom - most reliable method
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Calculate the height of the typing area to offset scroll position
+            const typingAreaHeight = 70; // minHeight from input area
+            const isMobile = window.innerWidth <= 768;
+            const additionalOffset = isMobile ? 20 : 10; // Extra padding for mobile
             
-            // Also use scrollIntoView as backup
+            // Scroll to bottom minus the typing area height
+            const targetScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+            messagesContainer.scrollTop = targetScrollTop;
+            
+            // Also use scrollIntoView as backup with proper block positioning
             if (messagesEndRef.current) {
                 messagesEndRef.current.scrollIntoView({ 
                     behavior: "auto", 
                     block: "end",
                     inline: "nearest"
                 });
+                
+                // Fine-tune scroll position to account for typing area
+                setTimeout(() => {
+                    const currentScroll = messagesContainer.scrollTop;
+                    const maxScroll = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+                    // Ensure we don't scroll past the maximum, but account for typing area
+                    messagesContainer.scrollTop = Math.min(maxScroll, currentScroll);
+                }, 10);
             }
         }
     };
@@ -151,13 +165,14 @@ const SingleChat = ({
     const checkIfAtBottom = () => {
         const messagesContainer = messagesContainerRef.current;
         if (messagesContainer) {
-            // Increase threshold to account for typing indicator height
-            const isNearBottom = messagesContainer.scrollTop + messagesContainer.clientHeight >= messagesContainer.scrollHeight - 150;
+            // Account for typing area height (70px) + some buffer (80px total)
+            const typingAreaBuffer = 80;
+            const isNearBottom = messagesContainer.scrollTop + messagesContainer.clientHeight >= messagesContainer.scrollHeight - typingAreaBuffer;
             setIsAtBottom(isNearBottom);
             
-            // Show scroll to bottom button if scrolled up significantly (more than ~10 messages worth)
+            // Show scroll to bottom button if scrolled up significantly
             const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
-            setShowScrollToBottomButton(scrolledUpDistance > 600); // ~10 messages * 60px average height
+            setShowScrollToBottomButton(scrolledUpDistance > 600);
             
             return isNearBottom;
         }
@@ -275,13 +290,19 @@ const SingleChat = ({
         setIsUserScrolling(false);
         setIsAtBottom(true);
         
-        // Immediate scroll to bottom after adding message
+        // Immediate scroll to bottom after adding message with proper timing
         requestAnimationFrame(() => {
             scrollToBottom(true);
-            // Double scroll to ensure it works
-            setTimeout(() => scrollToBottom(true), 50);
-            setTimeout(() => scrollToBottom(true), 150);
         });
+        
+        // Additional scrolls to ensure message is visible above typing area
+        setTimeout(() => {
+            scrollToBottom(true);
+        }, 50);
+        
+        setTimeout(() => {
+            scrollToBottom(true);
+        }, 200);
         
         try {
             const { data } = await axios.post('/api/message', messageData, {
