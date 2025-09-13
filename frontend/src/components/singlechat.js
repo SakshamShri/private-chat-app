@@ -165,13 +165,12 @@ const SingleChat = ({
     const checkIfAtBottom = () => {
         const messagesContainer = messagesContainerRef.current;
         if (messagesContainer) {
-            // Account for typing area height (70px) + some buffer (80px total)
-            const typingAreaBuffer = 80;
-            const isNearBottom = messagesContainer.scrollTop + messagesContainer.clientHeight >= messagesContainer.scrollHeight - typingAreaBuffer;
+            // Calculate distance from bottom (approximately 10 messages = 600px)
+            const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
+            const isNearBottom = scrolledUpDistance <= 600; // Within ~10 messages from bottom
             setIsAtBottom(isNearBottom);
             
             // Show scroll to bottom button if scrolled up significantly
-            const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
             setShowScrollToBottomButton(scrolledUpDistance > 600);
             
             return isNearBottom;
@@ -363,16 +362,21 @@ const SingleChat = ({
                     onMessageSent(newMessageReceived);
                 }
                 
-                // Check if user is at bottom before deciding to auto-scroll
-                const isCurrentlyAtBottom = checkIfAtBottom();
-                if (isCurrentlyAtBottom) {
-                    // Auto-scroll if user is at bottom
-                    setTimeout(() => {
-                        scrollToBottom(true);
-                    }, 50);
-                } else {
-                    // Show new message button if user is scrolled up
-                    setShowNewMessageButton(true);
+                // Check if user is within ~10 messages from bottom before deciding to auto-scroll
+                const messagesContainer = messagesContainerRef.current;
+                if (messagesContainer) {
+                    const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
+                    const isWithin10Messages = scrolledUpDistance <= 600; // ~10 messages * 60px average height
+                    
+                    if (isWithin10Messages) {
+                        // Auto-scroll if user is within 10 messages from bottom
+                        setTimeout(() => {
+                            scrollToBottom(true);
+                        }, 50);
+                    } else {
+                        // Show new message button if user has scrolled up more than 10 messages
+                        setShowNewMessageButton(true);
+                    }
                 }
             }
         };
