@@ -268,13 +268,13 @@ const SingleChat = ({
                 }
             });
             
-            // Emit message to socket for real-time delivery
+            // Emit message to socket for real-time delivery to other users
             if (socket) {
                 console.log('🚀 Sending message to socket:', data.content);
                 socket.emit('new message', data);
             }
             
-            // Add message locally for immediate display
+            // Add message locally for sender (other users get it via socket)
             setMessages(prev => [...prev, data]);
             setNewMessage('');
             

@@ -130,8 +130,8 @@ io.on("connection", (socket) => {
         }
         
         console.log('📤 Broadcasting to room:', chat._id);
-        // Send message to ALL users in the chat room
-        io.to(chat._id).emit("message received", newMessageReceived);
+        // Send message to OTHER users in the chat room (exclude sender)
+        socket.in(chat._id).emit("message received", newMessageReceived);
     });
 
     socket.on('typing', (room) => {
