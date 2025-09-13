@@ -611,7 +611,7 @@ const SingleChat = ({
                     inputRef.current?.blur();
                 }
             }}
-            style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden" }}
+            style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden", position: "relative" }}
         >
             {/* Chat Header */}
             <div style={{ 
@@ -723,7 +723,19 @@ const SingleChat = ({
                     ref={messagesContainerRef}
                     onScroll={handleScroll}
                     className="messages-container-mobile"
-                    style={{ flex: 1, overflowY: 'auto', padding: '12px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', gap: 8, background: '#1a1a1a' }}>
+                    style={{ 
+                        position: 'absolute',
+                        top: '60px', // Height of header
+                        bottom: '70px', // Height of typing area
+                        left: 0,
+                        right: 0,
+                        overflowY: 'auto', 
+                        padding: '12px', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: 8, 
+                        background: '#1a1a1a'
+                    }}>
                     {messages.map((message, index) => {
                         const isOwn = isOwnMessage(message);
                         const prevMessage = messages[index - 1];
@@ -786,7 +798,7 @@ const SingleChat = ({
                             gap: 8,
                             padding: '8px 12px',
                             marginTop: 8,
-                            marginBottom: 60,
+                            marginBottom: 20,
                             position: 'relative',
                             zIndex: 999
                         }}>
