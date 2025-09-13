@@ -118,30 +118,37 @@ const SingleChat = ({
     const scrollToBottom = (force = false) => {
         const messagesContainer = messagesContainerRef.current;
         if (messagesContainer) {
-            // Calculate the height of the typing area to offset scroll position
-            const typingAreaHeight = 70; // minHeight from input area
             const isMobile = window.innerWidth <= 768;
-            const additionalOffset = isMobile ? 20 : 10; // Extra padding for mobile
             
-            // Scroll to bottom minus the typing area height
-            const targetScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
-            messagesContainer.scrollTop = targetScrollTop;
+            if (isMobile) {
+                // For mobile, scroll to absolute bottom and then adjust upward
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Additional mobile-specific adjustment to ensure visibility above keyboard
+                setTimeout(() => {
+                    const mobileOffset = 100; // Extra offset for mobile keyboard
+                    const adjustedScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight - mobileOffset;
+                    messagesContainer.scrollTop = Math.max(0, adjustedScrollTop);
+                }, 50);
+                
+                // Final adjustment after keyboard settles
+                setTimeout(() => {
+                    const finalOffset = 80;
+                    const finalScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight - finalOffset;
+                    messagesContainer.scrollTop = Math.max(0, finalScrollTop);
+                }, 200);
+            } else {
+                // Desktop behavior - direct scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+            }
             
-            // Also use scrollIntoView as backup with proper block positioning
+            // Backup scrollIntoView for reliability
             if (messagesEndRef.current) {
                 messagesEndRef.current.scrollIntoView({ 
                     behavior: "auto", 
                     block: "end",
                     inline: "nearest"
                 });
-                
-                // Fine-tune scroll position to account for typing area
-                setTimeout(() => {
-                    const currentScroll = messagesContainer.scrollTop;
-                    const maxScroll = messagesContainer.scrollHeight - messagesContainer.clientHeight;
-                    // Ensure we don't scroll past the maximum, but account for typing area
-                    messagesContainer.scrollTop = Math.min(maxScroll, currentScroll);
-                }, 10);
             }
         }
     };
@@ -730,11 +737,12 @@ const SingleChat = ({
                     style={{ 
                         position: 'absolute',
                         top: '60px', // Height of header
-                        bottom: '70px', // Height of typing area
+                        bottom: window.innerWidth <= 768 ? '90px' : '70px', // Extra space for mobile
                         left: 0,
                         right: 0,
                         overflowY: 'auto', 
                         padding: '12px', 
+                        paddingBottom: window.innerWidth <= 768 ? '40px' : '20px',
                         display: 'flex', 
                         flexDirection: 'column', 
                         gap: 8, 
