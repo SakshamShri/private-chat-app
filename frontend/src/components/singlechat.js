@@ -337,9 +337,18 @@ const SingleChat = ({
                 });
                 
                 // Only show new message button if this message is not from current user
-                // This prevents sender from seeing their own message notification
+                // AND if user has scrolled up more than 10 messages from bottom
                 if (newMessageReceived.sender._id !== currentUserId) {
-                    setShowNewMessageButton(true);
+                    const messagesContainer = messagesContainerRef.current;
+                    if (messagesContainer) {
+                        const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
+                        const isScrolledUpMoreThan10Messages = scrolledUpDistance > 600; // ~10 messages * 60px average height
+                        
+                        if (isScrolledUpMoreThan10Messages) {
+                            setShowNewMessageButton(true);
+                        }
+                        // If user is within 10 messages from bottom, don't show button
+                    }
                 }
                 
                 // Update parent component's last message and move chat to top
