@@ -116,23 +116,18 @@ const SingleChat = ({
 
     // Auto-scroll to bottom when new messages arrive
     const scrollToBottom = (force = false) => {
-        if (messagesEndRef.current) {
-            // For mobile, use immediate scroll to prevent keyboard overlap
-            const isMobile = window.innerWidth <= 768;
-            messagesEndRef.current.scrollIntoView({ 
-                behavior: isMobile || force ? "auto" : "smooth", 
-                block: "end",
-                inline: "nearest"
-            });
+        const messagesContainer = messagesContainerRef.current;
+        if (messagesContainer) {
+            // Direct scroll to bottom - most reliable method
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
-            // Additional scroll adjustment for mobile to account for keyboard
-            if (isMobile) {
-                setTimeout(() => {
-                    const messagesContainer = messagesContainerRef.current;
-                    if (messagesContainer) {
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-                }, 100);
+            // Also use scrollIntoView as backup
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ 
+                    behavior: "auto", 
+                    block: "end",
+                    inline: "nearest"
+                });
             }
         }
     };
@@ -190,19 +185,13 @@ const SingleChat = ({
 
     // Auto-scroll to bottom when messages change
     useEffect(() => {
-        if (messages.length > 0) {
-            const messagesContainer = messagesContainerRef.current;
-            if (messagesContainer) {
-                // Always scroll to bottom when new messages are added and user is at bottom
-                if (isAtBottom || !isUserScrolling) {
-                    // Use requestAnimationFrame for smoother scrolling
-                    requestAnimationFrame(() => {
-                        scrollToBottom(true);
-                    });
-                }
-            }
+        if (messages.length > 0 && (isAtBottom || !isUserScrolling)) {
+            // Always scroll when messages change and user hasn't manually scrolled up
+            requestAnimationFrame(() => {
+                scrollToBottom(true);
+            });
         }
-    }, [messages.length, isAtBottom]); // Trigger when message count or bottom state changes
+    }, [messages.length]); // Only trigger on message count changes
 
     // Fetch messages when a chat is selected
     useEffect(() => {
@@ -286,15 +275,13 @@ const SingleChat = ({
         setIsUserScrolling(false);
         setIsAtBottom(true);
         
-        // Force immediate scroll to bottom after sending message
-        setTimeout(() => {
+        // Immediate scroll to bottom after adding message
+        requestAnimationFrame(() => {
             scrollToBottom(true);
-        }, 10);
-        
-        // Additional scroll for mobile after a short delay
-        setTimeout(() => {
-            scrollToBottom(true);
-        }, 200);
+            // Double scroll to ensure it works
+            setTimeout(() => scrollToBottom(true), 50);
+            setTimeout(() => scrollToBottom(true), 150);
+        });
         
         try {
             const { data } = await axios.post('/api/message', messageData, {
@@ -310,9 +297,9 @@ const SingleChat = ({
             ));
             
             // Ensure scroll to bottom after message is confirmed
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 scrollToBottom(true);
-            }, 50);
+            });
             
             // Emit message to socket for real-time delivery to other users
             if (socket) {
