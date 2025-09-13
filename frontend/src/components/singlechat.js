@@ -731,7 +731,9 @@ const SingleChat = ({
                             gap: 8,
                             padding: '8px 12px',
                             marginTop: 8,
-                            marginBottom: 20
+                            marginBottom: 100,
+                            position: 'relative',
+                            zIndex: 999
                         }}>
                             <div style={{
                                 width: 28,

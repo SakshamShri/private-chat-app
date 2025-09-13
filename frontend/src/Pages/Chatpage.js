@@ -54,6 +54,28 @@ const Chatpage = () => {
         }
     };
 
+    // Handle browser back button
+    useEffect(() => {
+        const handlePopState = (event) => {
+            event.preventDefault();
+            if (selectedChat && isMobile) {
+                // If in chat view on mobile, go back to chat list
+                handleBackToChatList();
+                // Push state back to prevent actual navigation
+                window.history.pushState(null, '', window.location.pathname);
+            }
+        };
+
+        // Push initial state
+        window.history.pushState(null, '', window.location.pathname);
+        
+        window.addEventListener('popstate', handlePopState);
+        
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [selectedChat, isMobile]);
+
     const { token, currentUserId, currentUserPic, currentUserName, currentUserEmail } = useMemo(() => {
         try {
             const info = JSON.parse(localStorage.getItem("userInfo"));
