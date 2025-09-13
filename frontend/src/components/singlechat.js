@@ -26,6 +26,7 @@ const SingleChat = ({
     const [isTyping, setIsTyping] = useState(false);
     const [typingUsers, setTypingUsers] = useState([]);
     const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const [socketConnected, setSocketConnected] = useState(false);
     const typingTimeoutRef = useRef(null);
     
     // Chat management states
