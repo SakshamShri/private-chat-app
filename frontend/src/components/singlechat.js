@@ -558,7 +558,7 @@ const SingleChat = ({
     }
 
     return (
-        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden" }}>
+        <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#1a1a1a", overflow: "hidden" }}>
             {/* Chat Header */}
             <div style={{ 
                 padding: '2px 16px', 
@@ -880,10 +880,14 @@ const SingleChat = ({
 
             {/* Message Input */}
             <div style={{ 
-                padding: '2px 16px', 
+                padding: '8px 16px', 
                 borderTop: '2px solid #3a3a3a',
                 border: '1px solid #3a3a3a',
-                background: '#2a2a2a'
+                background: '#2a2a2a',
+                minHeight: '60px',
+                position: 'sticky',
+                bottom: 0,
+                zIndex: 10
             }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, position: 'relative' }}>

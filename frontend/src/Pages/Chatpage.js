@@ -468,6 +468,12 @@ const Chatpage = () => {
                 body { margin: 0; padding: 0; overflow: hidden; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
                 #root { height: 100vh; overflow: hidden; }
                 
+                /* Mobile viewport fix */
+                @media (max-width: 768px) {
+                    body { height: 100vh; height: -webkit-fill-available; }
+                    #root { height: 100vh; height: -webkit-fill-available; }
+                }
+                
                 .glass-morphism {
                     background: #2a2a2a;
                     border: 1px solid #3a3a3a;
