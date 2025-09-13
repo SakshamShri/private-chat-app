@@ -342,14 +342,17 @@ const SingleChat = ({
                     onMessageSent(newMessageReceived);
                 }
                 
-                // Always scroll to bottom for received messages to ensure visibility
-                setTimeout(() => {
-                    scrollToBottom(true);
-                }, 50);
-                
-                // Also ensure we're marked as at bottom
-                setIsAtBottom(true);
-                setIsUserScrolling(false);
+                // Check if user is at bottom before deciding to auto-scroll
+                const isCurrentlyAtBottom = checkIfAtBottom();
+                if (isCurrentlyAtBottom) {
+                    // Auto-scroll if user is at bottom
+                    setTimeout(() => {
+                        scrollToBottom(true);
+                    }, 50);
+                } else {
+                    // Show new message button if user is scrolled up
+                    setShowNewMessageButton(true);
+                }
             }
         };
 
