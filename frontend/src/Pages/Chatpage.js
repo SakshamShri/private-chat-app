@@ -472,6 +472,20 @@ const Chatpage = () => {
                 @media (max-width: 768px) {
                     body { height: 100vh; height: -webkit-fill-available; }
                     #root { height: 100vh; height: -webkit-fill-available; }
+                    
+                    /* Ensure mobile input is always visible */
+                    .mobile-input-fix {
+                        position: fixed !important;
+                        bottom: 0 !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        z-index: 9999 !important;
+                        background: #2a2a2a !important;
+                        border-top: 2px solid #3a3a3a !important;
+                        padding: 12px 16px !important;
+                        min-height: 70px !important;
+                        box-sizing: border-box !important;
+                    }
                 }
                 
                 .glass-morphism {

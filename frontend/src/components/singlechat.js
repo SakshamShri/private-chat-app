@@ -668,7 +668,7 @@ const SingleChat = ({
                 <div 
                     ref={messagesContainerRef}
                     onScroll={handleScroll}
-                    style={{ flex: 1, overflowY: 'auto', padding: '12px', display: 'flex', flexDirection: 'column', gap: 8, background: '#1a1a1a' }}>
+                    style={{ flex: 1, overflowY: 'auto', padding: '12px', paddingBottom: '90px', display: 'flex', flexDirection: 'column', gap: 8, background: '#1a1a1a' }}>
                     {messages.map((message, index) => {
                         const isOwn = isOwnMessage(message);
                         const prevMessage = messages[index - 1];
@@ -879,15 +879,19 @@ const SingleChat = ({
             )}
 
             {/* Message Input */}
-            <div style={{ 
-                padding: '8px 16px', 
+            <div className="mobile-input-fix" style={{ 
+                padding: '12px 16px', 
                 borderTop: '2px solid #3a3a3a',
                 border: '1px solid #3a3a3a',
                 background: '#2a2a2a',
-                minHeight: '60px',
-                position: 'sticky',
+                minHeight: '70px',
+                position: 'fixed',
                 bottom: 0,
-                zIndex: 10
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+                width: '100%',
+                boxSizing: 'border-box'
             }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, position: 'relative' }}>
