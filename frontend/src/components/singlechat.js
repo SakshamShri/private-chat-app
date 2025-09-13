@@ -277,11 +277,6 @@ const SingleChat = ({
         setNewMessage('');
         setIsUserScrolling(false);
         
-        // Use setTimeout to ensure DOM updates before scrolling
-        setTimeout(() => {
-            scrollToBottom();
-        }, 10);
-        
         try {
             const { data } = await axios.post('/api/message', messageData, {
                 headers: {
@@ -304,11 +299,6 @@ const SingleChat = ({
             if (onMessageSent) {
                 onMessageSent(data);
             }
-            
-            // Ensure scroll to bottom after message replacement
-            setTimeout(() => {
-                scrollToBottom();
-            }, 10);
             
             // Don't auto-focus back to input to prevent keyboard flickering
             // User can tap input to bring keyboard back when needed
