@@ -289,8 +289,8 @@ const SingleChat = ({
                 scrollToBottom();
             }, 100);
             
-            // Focus back to input
-            inputRef.current?.focus();
+            // Don't auto-focus back to input to prevent keyboard flickering
+            // User can tap input to bring keyboard back when needed
         } catch (error) {
             console.error('Error sending message:', error);
             alert('Failed to send message. Please try again.');
@@ -907,6 +907,13 @@ const SingleChat = ({
                                 }
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={(e) => {
+                                // Prevent blur during message sending to keep keyboard open
+                                if (sending) {
+                                    e.preventDefault();
+                                    e.target.focus();
+                                }
+                            }}
                             placeholder="Type a message..."
                             style={{
                                 width: '100%',
@@ -928,7 +935,10 @@ const SingleChat = ({
                         />
                     </div>
                     <button
-                        onClick={sendMessage}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            sendMessage();
+                        }}
                         disabled={!newMessage.trim() || sending}
                         style={{
                             width: 40,
