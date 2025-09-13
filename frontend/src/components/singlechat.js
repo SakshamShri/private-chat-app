@@ -942,10 +942,10 @@ const SingleChat = ({
                 minHeight: '70px',
                 position: 'fixed',
                 bottom: 0,
-                left: 0,
+                left: window.innerWidth <= 768 ? 0 : '240px', // Full width on mobile, after sidebar on desktop
                 right: 0,
                 zIndex: 1000,
-                width: '100%',
+                width: window.innerWidth <= 768 ? '100%' : 'calc(100% - 240px)', // Full width on mobile, subtract sidebar on desktop
                 boxSizing: 'border-box'
             }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
