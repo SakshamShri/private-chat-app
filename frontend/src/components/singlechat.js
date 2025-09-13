@@ -332,26 +332,13 @@ const SingleChat = ({
                     return [...prev, newMessageReceived];
                 });
                 
+                // Only show new message button for received messages, never auto-scroll
+                // This prevents interrupting the receiver's reading position
+                setShowNewMessageButton(true);
+                
                 // Update parent component's last message and move chat to top
                 if (onMessageSent) {
                     onMessageSent(newMessageReceived);
-                }
-                
-                // Check if user is within ~10 messages from bottom before deciding to auto-scroll
-                const messagesContainer = messagesContainerRef.current;
-                if (messagesContainer) {
-                    const scrolledUpDistance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
-                    const isWithin10Messages = scrolledUpDistance <= 600; // ~10 messages * 60px average height
-                    
-                    if (isWithin10Messages) {
-                        // Auto-scroll if user is within 10 messages from bottom
-                        setTimeout(() => {
-                            scrollToBottom(true);
-                        }, 50);
-                    } else {
-                        // Show new message button if user has scrolled up more than 10 messages
-                        setShowNewMessageButton(true);
-                    }
                 }
             }
         };
