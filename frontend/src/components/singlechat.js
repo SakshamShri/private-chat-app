@@ -120,36 +120,10 @@ const SingleChat = ({
         if (messagesContainer) {
             const isMobile = window.innerWidth <= 768;
             
-            if (isMobile) {
-                // For mobile, scroll to absolute bottom and then adjust upward
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                
-                // Additional mobile-specific adjustment to ensure visibility above keyboard
-                setTimeout(() => {
-                    const mobileOffset = 100; // Extra offset for mobile keyboard
-                    const adjustedScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight - mobileOffset;
-                    messagesContainer.scrollTop = Math.max(0, adjustedScrollTop);
-                }, 50);
-                
-                // Final adjustment after keyboard settles
-                setTimeout(() => {
-                    const finalOffset = 80;
-                    const finalScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight - finalOffset;
-                    messagesContainer.scrollTop = Math.max(0, finalScrollTop);
-                }, 200);
-            } else {
-                // Desktop behavior - direct scroll to bottom
-                messagesContainer.scrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
-            }
-            
-            // Backup scrollIntoView for reliability
-            if (messagesEndRef.current) {
-                messagesEndRef.current.scrollIntoView({ 
-                    behavior: "auto", 
-                    block: "end",
-                    inline: "nearest"
-                });
-            }
+            // Calculate the proper scroll position once and set it directly
+            const mobileOffset = isMobile ? 80 : 0;
+            const targetScrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight - mobileOffset;
+            messagesContainer.scrollTop = Math.max(0, targetScrollTop);
         }
     };
     // Socket setup
@@ -296,19 +270,10 @@ const SingleChat = ({
         setIsUserScrolling(false);
         setIsAtBottom(true);
         
-        // Immediate scroll to bottom after adding message with proper timing
+        // Single smooth scroll to bottom after adding message
         requestAnimationFrame(() => {
             scrollToBottom(true);
         });
-        
-        // Additional scrolls to ensure message is visible above typing area
-        setTimeout(() => {
-            scrollToBottom(true);
-        }, 50);
-        
-        setTimeout(() => {
-            scrollToBottom(true);
-        }, 200);
         
         try {
             const { data } = await axios.post('/api/message', messageData, {
