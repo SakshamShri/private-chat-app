@@ -46,7 +46,7 @@ const SignupPage = ({ onSignupSuccess }) => {
         userData.pic = pic;
       }
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`, {
+      const response = await fetch(`/api/user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
