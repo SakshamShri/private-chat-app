@@ -22,7 +22,6 @@ const SignupPage = ({ onSignupSuccess }) => {
     console.log("=== Environment Variables Debug ===");
     console.log("REACT_APP_CLOUDINARY_CLOUD_NAME:", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
     console.log("REACT_APP_CLOUDINARY_UPLOAD_PRESET:", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
-    console.log("REACT_APP_API_URL:", process.env.REACT_APP_API_URL);
     console.log("=====================================");
   }, []);
 
