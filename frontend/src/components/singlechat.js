@@ -178,13 +178,17 @@ const SingleChat = ({
         }, 1000);
     };
 
-    // Auto-scroll to bottom when messages change
+    // Auto-scroll to bottom when messages change - only for sender's own messages
     useEffect(() => {
         if (messages.length > 0 && (isAtBottom || !isUserScrolling)) {
-            // Always scroll when messages change and user hasn't manually scrolled up
-            requestAnimationFrame(() => {
-                scrollToBottom(true);
-            });
+            // Check if the last message is from current user (sender)
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage && lastMessage.sender._id === currentUserId) {
+                // Only auto-scroll for sender's own messages
+                requestAnimationFrame(() => {
+                    scrollToBottom(true);
+                });
+            }
         }
     }, [messages.length]); // Only trigger on message count changes
 
