@@ -25,12 +25,45 @@ app.use('/api/message', messageRoutes);
 //-----------------------deployment code-----------------------//
 const __dirname1 = path.resolve();
 if(process.env.NODE_ENV === 'production'){
-    // Since server.js runs from backend/, we need to go up one level to reach frontend/build
-    const frontendPath = path.join(__dirname1, 'frontend', 'build');
-    app.use(express.static(frontendPath));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    });
+    // Debug: Log current directory and available paths
+    console.log('Current directory (__dirname1):', __dirname1);
+    console.log('Process cwd:', process.cwd());
+    
+    // Try multiple possible paths
+    const possiblePaths = [
+        path.join(__dirname1, 'frontend', 'build'),
+        path.join(__dirname1, '..', 'frontend', 'build'),
+        path.join(process.cwd(), 'frontend', 'build'),
+        path.join(__dirname1, 'build'),
+        '/opt/render/project/src/frontend/build'
+    ];
+    
+    let frontendPath = null;
+    for (const testPath of possiblePaths) {
+        console.log('Testing path:', testPath);
+        try {
+            const fs = require('fs');
+            if (fs.existsSync(path.join(testPath, 'index.html'))) {
+                frontendPath = testPath;
+                console.log('Found frontend build at:', frontendPath);
+                break;
+            }
+        } catch (err) {
+            console.log('Path not accessible:', testPath);
+        }
+    }
+    
+    if (frontendPath) {
+        app.use(express.static(frontendPath));
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(frontendPath, 'index.html'));
+        });
+    } else {
+        console.log('Frontend build not found, serving API only');
+        app.get('*', (req, res) => {
+            res.json({ message: 'API is running - Frontend build not found' });
+        });
+    }
 }else{
     app.get('/',(req,res)=>{
         res.send("API is running");
