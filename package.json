@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "build": "cd frontend && npm install && npm run build",
+    "install-deps": "npm install && cd frontend && npm install && cd ../backend && npm install"
   },
   "author": "saksham shrivastava",
   "license": "ISC",
