@@ -277,6 +277,9 @@ const SingleChat = ({
         setIsUserScrolling(false);
         scrollToBottom();
         
+        // Stop loading spinner immediately after optimistic update
+        setSending(false);
+        
         try {
             const { data } = await axios.post('/api/message', messageData, {
                 headers: {
@@ -309,8 +312,6 @@ const SingleChat = ({
             // Restore message text for retry
             setNewMessage(messageData.content);
             alert('Failed to send message. Please try again.');
-        } finally {
-            setSending(false);
         }
     };
 
