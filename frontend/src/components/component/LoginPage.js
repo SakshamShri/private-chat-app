@@ -59,20 +59,21 @@ const LoginPage = ({ onLoginSuccess }) => {
   };
 
   return (
-    <Container maxW="container.md" centerContent>
+    <Container maxW="container.md" centerContent px={4}>
       <Box
         display="flex"
         justifyContent="center"
         p={3}
-        w="60%"
-        mt={10}
+        w={{ base: "95%", sm: "80%", md: "60%" }}
+        maxW="500px"
+        mt={{ base: 4, md: 10 }}
         mb={4}
         borderRadius="lg"
         borderWidth="1px"
         backgroundColor="whiteAlpha.500"
       >
         <Text
-          fontSize="4xl"
+          fontSize={{ base: "2xl", md: "4xl" }}
           fontFamily="Work sans"
           color="black"
           fontWeight="bold"
@@ -82,7 +83,14 @@ const LoginPage = ({ onLoginSuccess }) => {
         </Text>
       </Box>
 
-      <Box w="60%" borderWidth="1px" borderRadius="lg" p={4} backgroundColor="black">
+      <Box 
+        w={{ base: "95%", sm: "80%", md: "60%" }}
+        maxW="500px"
+        borderWidth="1px" 
+        borderRadius="lg" 
+        p={4} 
+        backgroundColor="black"
+      >
         <form onSubmit={handleSubmit}>
           <Stack gap="4">
             <Field.Root required>

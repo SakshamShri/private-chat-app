@@ -206,9 +206,9 @@ const SignupPage = ({ onSignupSuccess }) => {
 
   return (
     <div style={{ 
-      height: "100vh", 
+      minHeight: "100vh", 
       overflowY: "auto", 
-      padding: "20px", 
+      padding: "10px", 
       display: "flex", 
       flexDirection: "column", 
       alignItems: "center" 
@@ -217,8 +217,8 @@ const SignupPage = ({ onSignupSuccess }) => {
         display: "flex", 
         justifyContent: "center", 
         padding: "12px", 
-        width: "60%", 
-        minWidth: "400px",
+        width: "95%", 
+        maxWidth: "500px",
         marginTop: "10px", 
         marginBottom: "16px", 
         borderRadius: "8px", 
@@ -226,7 +226,7 @@ const SignupPage = ({ onSignupSuccess }) => {
         backgroundColor: "rgba(255,255,255,0.5)" 
       }}>
         <Text
-          fontSize="4xl"
+          fontSize={{ base: "2xl", md: "4xl" }}
           fontFamily="Work sans"
           color="black"
           fontWeight="bold"
@@ -237,9 +237,8 @@ const SignupPage = ({ onSignupSuccess }) => {
       </div>
 
       <div style={{ 
-        width: "60%", 
-        minWidth: "400px",
-        maxWidth: "600px",
+        width: "95%", 
+        maxWidth: "500px",
         border: "1px solid #e2e8f0", 
         borderRadius: "8px", 
         padding: "16px", 
