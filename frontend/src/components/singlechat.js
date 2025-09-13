@@ -838,7 +838,7 @@ const SingleChat = ({
             {showNewMessageButton && (
                 <div style={{
                     position: 'absolute',
-                    bottom: '80px',
+                    bottom: '120px',
                     right: '20px',
                     zIndex: 10
                 }}>
@@ -877,7 +877,7 @@ const SingleChat = ({
             {showScrollToBottomButton && !showNewMessageButton && (
                 <div style={{
                     position: 'absolute',
-                    bottom: '80px',
+                    bottom: '120px',
                     right: '20px',
                     zIndex: 10
                 }}>
