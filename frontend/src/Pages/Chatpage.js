@@ -512,7 +512,7 @@ const Chatpage = () => {
                     /* Increase message container bottom padding on mobile when keyboard might be open */
                     @media (max-width: 768px) {
                         .messages-container-mobile {
-                            padding-bottom: 120px !important;
+                            padding-bottom: 160px !important;
                         }
                     }
                 }

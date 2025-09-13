@@ -277,6 +277,11 @@ const SingleChat = ({
         setNewMessage('');
         setIsUserScrolling(false);
         
+        // Auto-scroll to bottom after sending message
+        setTimeout(() => {
+            scrollToBottom();
+        }, 50);
+        
         try {
             const { data } = await axios.post('/api/message', messageData, {
                 headers: {
