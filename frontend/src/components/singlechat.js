@@ -332,9 +332,11 @@ const SingleChat = ({
                     return [...prev, newMessageReceived];
                 });
                 
-                // Only show new message button for received messages, never auto-scroll
-                // This prevents interrupting the receiver's reading position
-                setShowNewMessageButton(true);
+                // Only show new message button if this message is not from current user
+                // This prevents sender from seeing their own message notification
+                if (newMessageReceived.sender._id !== currentUserId) {
+                    setShowNewMessageButton(true);
+                }
                 
                 // Update parent component's last message and move chat to top
                 if (onMessageSent) {
