@@ -508,6 +508,13 @@ const Chatpage = () => {
                         min-height: 70px !important;
                         box-sizing: border-box !important;
                     }
+                    
+                    /* Increase message container bottom padding on mobile when keyboard might be open */
+                    @media (max-width: 768px) {
+                        .messages-container-mobile {
+                            padding-bottom: 120px !important;
+                        }
+                    }
                 }
                 
                 .glass-morphism {

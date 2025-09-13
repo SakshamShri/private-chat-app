@@ -260,7 +260,8 @@ const SingleChat = ({
             chatId: selectedChat._id
         };
 
-        setSending(true);
+        // Don't show loading spinner for optimistic UI
+        // setSending(true);
         
         // Optimistic UI update - show message immediately
         const optimisticMessage = {
@@ -276,9 +277,6 @@ const SingleChat = ({
         setNewMessage('');
         setIsUserScrolling(false);
         scrollToBottom();
-        
-        // Stop loading spinner immediately after optimistic update
-        setSending(false);
         
         try {
             const { data } = await axios.post('/api/message', messageData, {
@@ -693,6 +691,7 @@ const SingleChat = ({
                 <div 
                     ref={messagesContainerRef}
                     onScroll={handleScroll}
+                    className="messages-container-mobile"
                     style={{ flex: 1, overflowY: 'auto', padding: '12px', paddingBottom: '90px', display: 'flex', flexDirection: 'column', gap: 8, background: '#1a1a1a' }}>
                     {messages.map((message, index) => {
                         const isOwn = isOwnMessage(message);
