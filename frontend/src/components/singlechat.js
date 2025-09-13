@@ -288,11 +288,6 @@ const SingleChat = ({
                 msg.isOptimistic && msg.content === data.content ? data : msg
             ));
             
-            // Ensure scroll to bottom after message is confirmed
-            requestAnimationFrame(() => {
-                scrollToBottom(true);
-            });
-            
             // Emit message to socket for real-time delivery to other users
             if (socket) {
                 socket.emit('new message', data);
@@ -327,7 +322,15 @@ const SingleChat = ({
                 // give notification
             } else {
                 console.log('✅ Adding message to current chat');
-                setMessages(prev => [...prev, newMessageReceived]);
+                // Only add message if it's not already in the list (prevent duplicates from socket)
+                setMessages(prev => {
+                    const messageExists = prev.some(msg => msg._id === newMessageReceived._id);
+                    if (messageExists) {
+                        console.log('🔄 Message already exists, skipping duplicate');
+                        return prev;
+                    }
+                    return [...prev, newMessageReceived];
+                });
                 
                 // Update parent component's last message and move chat to top
                 if (onMessageSent) {
